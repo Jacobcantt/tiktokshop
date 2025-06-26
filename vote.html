@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Głosowanie</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .container {
+      background: #f9f9f9;
+      padding: 30px;
+      border-radius: 10px;
+      margin-top: 50px;
+    }
+    button {
+      background: #25F4EE;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Głosuj na @<span id="username"></span></h1>
+    <p>Kliknij poniżej, aby oddać głos:</p>
+    <button onclick="vote()">🗳️ Zagłosuj</button>
+    <p id="message"></p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+  <script>
+    // Pobierz nazwę użytkownika z URL
+    const path = window.location.pathname; // np. "/@jacobcan"
+    const username = path.split('@')[1];
+    
+    document.getElementById('username').textContent = username;
+
+    function vote() {
+      // Pobierz IP użytkownika (prosty sposób)
+      fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => {
+          const ip = data.ip;
+          
+          // Zapisz głos
+          db.collection("votes").add({
+            username: username,
+            ip: ip,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(() => {
+            document.getElementById("message").innerHTML = `
+              <span style="color: green;">✔️ Dziękujemy za głos!</span>
+              <p>Możesz zamknąć tę stronę</p>
+            `;
+          });
+        });
+    }
+  </script>
+</body>
+</html>
