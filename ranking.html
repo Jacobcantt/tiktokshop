@@ -59,11 +59,12 @@
 
     // Pobieranie rankingu
     db.collection("votes").onSnapshot((snapshot) => {
-      const votes = {};
-      snapshot.forEach((doc) => {
-        const id = doc.data().shirtId;
-        votes[id] = (votes[id] || 0) + 1;
-      });
+  const votes = {};
+  snapshot.forEach((doc) => {
+    const username = doc.data().username;
+    votes[username] = (votes[username] || 0) + 1;
+  });
+
 
       // Sortowanie
       const sorted = Object.entries(votes).sort((a, b) => b[1] - a[1]);
