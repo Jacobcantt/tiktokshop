@@ -1,5 +1,6 @@
 {
   "routes": [
+    { "src": "/@([a-zA-Z0-9_]+)", "dest": "/vote.html?user=$1" },
     { "src": "/ranking", "dest": "/ranking.html" },
     { "src": "/", "dest": "/index.html" }
   ]
