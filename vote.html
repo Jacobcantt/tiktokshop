@@ -1,38 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Głosowanie</title>
   <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      text-align: center; 
-      padding: 20px;
-      max-width: 600px;
-      margin: 0 auto;
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+PHBhdGggZD0iTTAgMCBMIDEwMCAxMDAgTSAxMDAgMCBMIDAgMTAwIiBzdHJva2U9InJnYmEoMCwwLDAsMC4wMykiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
     }
+    
     .container {
-      background: #f9f9f9;
-      padding: 30px;
-      border-radius: 10px;
-      margin-top: 50px;
+      max-width: 580px;
+      margin: 5% auto;
+      padding: 40px;
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
     }
+    
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #000000, #555555, #000000);
+    }
+    
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      color: #222;
+      letter-spacing: -0.5px;
+    }
+    
+    p {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+    
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #ddd, transparent);
+      margin: 30px 0;
+    }
+    
     button {
-      background: #25F4EE;
+      background-color: #000;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      border-radius: 2px;
       cursor: pointer;
-      margin-top: 15px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      margin: 10px 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    button:hover {
+      background-color: #222;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button::after {
+      content: "🗳️";
+      margin-left: 10px;
+      font-size: 1.2rem;
+      vertical-align: middle;
+    }
+    
+    #message {
+      margin-top: 25px;
+      font-size: 1rem;
+      min-height: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #message span {
+      font-weight: 500;
+    }
+    
+    .success {
+      color: #000;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #999;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        margin: 10% auto;
+        padding: 30px 20px;
+        width: 90%;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Głosuj na @<span id="username"></span></h1>
-    <p>Kliknij poniżej, aby oddać głos:</p>
-    <button onclick="vote()">🗳️ Zagłosuj</button>
-    <p id="message"></p>
+    <div class="divider"></div>
+    <p>Kliknij poniższy przycisk, aby oddać ważny głos</p>
+    <button onclick="vote()">Zagłosuj</button>
+    <div id="message"></div>
+    <div class="footer">
+      System głosowania © 2023 | Wszelkie prawa zastrzeżone
+    </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -46,7 +157,11 @@
     document.getElementById('username').textContent = username;
 
     function vote() {
-      // Pobierz IP użytkownika (prosty sposób)
+      const button = document.querySelector('button');
+      button.disabled = true;
+      button.innerHTML = 'Przetwarzanie...';
+      
+      // Pobierz IP użytkownika
       fetch('https://api.ipify.org?format=json')
         .then(res => res.json())
         .then(data => {
@@ -59,10 +174,26 @@
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
           }).then(() => {
             document.getElementById("message").innerHTML = `
-              <span style="color: green;">✔️ Dziękujemy za głos!</span>
-              <p>Możesz zamknąć tę stronę</p>
+              <span class="success">✔️ Dziękujemy za oddanie głosu</span>
+              <p>Twój głos został zarejestrowany</p>
             `;
+            button.style.display = 'none';
+          }).catch(error => {
+            document.getElementById("message").innerHTML = `
+              <span style="color: #d32f2f;">✖️ Wystąpił błąd podczas przetwarzania głosu</span>
+              <p>Prosimy spróbować ponownie</p>
+            `;
+            button.disabled = false;
+            button.innerHTML = 'Spróbuj ponownie';
           });
+        })
+        .catch(() => {
+          document.getElementById("message").innerHTML = `
+            <span style="color: #d32f2f;">✖️ Nie można połączyć się z serwerem</span>
+            <p>Sprawdź połączenie internetowe</p>
+          `;
+          button.disabled = false;
+          button.innerHTML = 'Spróbuj ponownie';
         });
     }
   </script>
