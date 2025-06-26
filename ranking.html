@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ranking TikTok</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      color: #ff0050; /* Kolor TikTok */
+      text-align: center;
+    }
+    .user-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+    }
+    .user-position {
+      font-weight: bold;
+      color: #ff0050;
+    }
+    .user-votes {
+      background: #eee;
+      padding: 5px 10px;
+      border-radius: 20px;
+    }
+    .tiktok-handle {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏆 Ranking TikTok</h1>
+  <div id="ranking"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script>
+    // Konfiguracja Firebase (użyj Twoich danych z firebase.js)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBjDezqhV03KtAN5XPFTFEFVBbXfxfTeck",
+      authDomain: "tiktok-voting-a5170.firebaseapp.com",
+      projectId: "tiktok-voting-a5170",
+      storageBucket: "tiktok-voting-a5170.appspot.com",
+      messagingSenderId: "50968375516",
+      appId: "1:50968375516:web:1aab0987a9ab7cda468419"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Pobieranie rankingu
+    db.collection("votes").onSnapshot((snapshot) => {
+      const votes = {};
+      snapshot.forEach((doc) => {
+        const id = doc.data().shirtId;
+        votes[id] = (votes[id] || 0) + 1;
+      });
+
+      // Sortowanie
+      const sorted = Object.entries(votes).sort((a, b) => b[1] - a[1]);
+      
+      // Generowanie HTML
+      let html = '';
+      sorted.forEach(([id, count], index) => {
+        html += `
+          <div class="user-card">
+            <div>
+              <span class="user-position">${index + 1}.</span>
+              <span class="tiktok-handle">@${id}</span>
+            </div>
+            <span class="user-votes">${count} głosów</span>
+          </div>
+        `;
+      });
+      
+      document.getElementById("ranking").innerHTML = html || "<p>Brak danych rankingowych</p>";
+    });
+  </script>
+</body>
+</html>
